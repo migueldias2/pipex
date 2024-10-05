@@ -2,35 +2,45 @@ NAME = pipex
 
 CC = cc
 
-# CFLAGS = -Werror -Wall -Wextra -fsanitize=address ??
+CFLAGS = -Werror -Wall -Wextra
 
 RM = rm -rf
 
-# SRCS = 	src/pipex.c\
-		src/utils.c\
-		libft/libft.a
+# Define sources and objects
 
-# SRCS_BONUS = 	src_bonus/pipex_bonus.c\
-# 				src_bonus/utils_bonus.c\
-					libft/libft.a
+SRCS = 	pipex.c\
+		perrors.c\
+		utils.c\
 
-$(NAME) :
-	make all -C libft
-	$(CC) $(CFLAGS) $(SRCS) -o $(NAME)
+OBJ = $(SRCS:.c=.o)
 
+# Bonus sources and objects
+
+SRCS_BONUS = 	src_bonus/pipex_bonus.c\
+ 				src_bonus/utils_bonus.c\
+
+OBJ_BONUS = $(SRCS_BONUS:.c=.o)
+
+LIBFT = libft/libft.a
+# Compile the main program
+
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+
+$(LIBFT):
+	make -C libft
 
 all : $(NAME)
+
+clean :
+	$(RM) $(OBJ) $(OBJ_BONUS)
+	make clean -C libft
 
 fclean : clean
 	$(RM) $(NAME)
 	make fclean -C libft
 
-clean :
-	$(RM) $(NAME)
-	make clean -C libft
-
 re : fclean all
 
-bonus : clean
-	make all -C libft
-	$(CC) $(CFLAGS) $(SRCS_BONUS) -o $(NAME)
+bonus : fclean $(OBJ_BONUS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT) -o $(NAME)
