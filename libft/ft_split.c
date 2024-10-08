@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcarepa- <mcarepa-@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: mcarepa- <mcarepa-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 17:05:44 by mcarepa-          #+#    #+#             */
-/*   Updated: 2024/04/11 23:27:45 by mcarepa-         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:32:18 by mcarepa-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,20 @@ static size_t	ft_wordcount(char const *s, char c)
 
 	i = 0;
 	word_count = 0;
+	if (!s)
+		return (0);
 	while (s[i])
 	{
 		if (s[i] == c)
 		{
 			while (s[i] == c)
-			{
 				i++;
-			}
 		}
 		if (s[i] != c && s[i])
 		{
 			word_count++;
 			while (s[i] != c && s[i])
-			{
 				i++;
-			}
 		}
 	}
 	return (word_count);
@@ -98,6 +96,8 @@ char	**ft_split(char const *s, char c)
 	size_t	total_words;
 	char	**list;
 
+	if (!s)
+		return (NULL);
 	total_words = ft_wordcount(s, c);
 	list = (char **)malloc((total_words + 1) * sizeof(char *));
 	if (!list)
@@ -113,7 +113,7 @@ char	**ft_split(char const *s, char c)
 {
 	size_t	i;
 	char	**ptr = ft_split("      ola     mundo    tudo   bem    ", 'o');
-	
+
 	i = 0;
 	while (ptr[i])
 	{

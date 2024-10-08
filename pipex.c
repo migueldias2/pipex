@@ -6,11 +6,27 @@
 /*   By: mcarepa- <mcarepa-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 18:38:45 by mcarepa-          #+#    #+#             */
-/*   Updated: 2024/10/05 18:41:13 by mcarepa-         ###   ########.fr       */
+/*   Updated: 2024/10/08 14:55:30 by mcarepa-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+int	ft_words(char *str)
+{
+	int	i;
+
+	i = 0;
+	while(str[i] != '\0')
+	{
+		if (str[i] != ' ')
+			return (1);
+		i++;
+	}
+	if (str[i] == '\0')
+		return (0);
+	return (0);
+}
 
 void	exec(char *cmd, char *env[])
 {
@@ -18,12 +34,17 @@ void	exec(char *cmd, char *env[])
 	char	*path;
 
 	cmd_list = ft_split(cmd, ' ');
+	if (!cmd_list)
+	{
+		perror("Failed to split command");
+		exit(EXIT_FAILURE);
+	}
 	path = get_path(cmd_list[0], env);
 	if (execve(path, cmd_list, env) == -1)
 	{
 		perror("execve");
 		ft_free(cmd_list);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -41,8 +62,8 @@ void	handle_child2(int *pipe_fd, char *argv[], char *env[])
 		exit_open_error(1);
 	dup2(pipe_fd[0], STDIN_FILENO);
 	dup2(outfile, STDOUT_FILENO);
-	close(pipe_fd[1]);
 	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 	close(outfile);
 	exec(argv[3], env);
 }
@@ -69,6 +90,8 @@ int	main(int argc, char *argv[], char *env[])
 	pid_t	pid2;
 
 	if (argc != 5)
+		exit_args_error(1);
+	if (ft_words(argv[2]) == 0 || ft_words(argv[3]) == 0)
 		exit_args_error(1);
 	if (pipe(pipe_fd) == -1)
 		exit_pipe_error(1);

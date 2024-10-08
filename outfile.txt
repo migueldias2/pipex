@@ -1,0 +1,1 @@
+mcarepa- tty7     :0               12:23   20:35m  5:29   0.20s /usr/sbin/ft-init hooks login-user env GNOME_SHELL_SESSION_MODE=ubuntu /usr/bin/gnome-session --systemd --session=ubuntu
