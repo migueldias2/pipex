@@ -6,25 +6,38 @@
 /*   By: mcarepa- <mcarepa-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 18:38:45 by mcarepa-          #+#    #+#             */
-/*   Updated: 2024/10/08 14:55:30 by mcarepa-         ###   ########.fr       */
+/*   Updated: 2024/10/14 11:11:24 by mcarepa-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_words(char *str)
+int	ft_words_empty(char *str[])
 {
 	int	i;
+	int	j;
+	int	empty;
 
-	i = 0;
-	while(str[i] != '\0')
+	i = 1;
+	while (str[i])
 	{
-		if (str[i] != ' ')
+		j = 0;
+		empty = 1;
+		if (str[i][0] == '\0')
+			return (1);
+		while (str[i][j] != '\0')
+		{
+			if (str[i][j] != ' ' && str[i][j] != '\t')
+			{
+				empty = 0;
+				break ;
+			}
+			j++;
+		}
+		if (empty == 1)
 			return (1);
 		i++;
 	}
-	if (str[i] == '\0')
-		return (0);
 	return (0);
 }
 
@@ -52,14 +65,9 @@ void	handle_child2(int *pipe_fd, char *argv[], char *env[])
 {
 	int	outfile;
 
-	if (access(argv[4], F_OK) == 0)
-	{
-		if (unlink(argv[4]) == -1)
-			exit_unlink_error(1);
-	}
 	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (outfile == -1)
-		exit_open_error(1);
+		exit_open_error(pipe_fd);
 	dup2(pipe_fd[0], STDIN_FILENO);
 	dup2(outfile, STDOUT_FILENO);
 	close(pipe_fd[0]);
@@ -74,7 +82,7 @@ void	handle_child1(int *pipe_fd, char *argv[], char *env[])
 
 	infile = open(argv[1], O_RDONLY);
 	if (infile == -1)
-		exit_open_error(1);
+		exit_open_error(pipe_fd);
 	dup2(infile, STDIN_FILENO);
 	dup2(pipe_fd[1], STDOUT_FILENO);
 	close(infile);
@@ -87,12 +95,15 @@ int	main(int argc, char *argv[], char *env[])
 {
 	int		pipe_fd[2];
 	pid_t	pid1;
-	pid_t	pid2;
+	char	*path_env;
 
 	if (argc != 5)
 		exit_args_error(1);
-	if (ft_words(argv[2]) == 0 || ft_words(argv[3]) == 0)
+	if (ft_words_empty(argv) == 1)
 		exit_args_error(1);
+	path_env = get_env(env);
+	if (!path_env)
+		exit_path_error();
 	if (pipe(pipe_fd) == -1)
 		exit_pipe_error(1);
 	pid1 = fork();
@@ -100,14 +111,11 @@ int	main(int argc, char *argv[], char *env[])
 		exit_fork_error(1);
 	else if (pid1 == 0)
 		handle_child1(pipe_fd, argv, env);
-	pid2 = fork();
-	if (pid2 == -1)
+	pid1 = fork();
+	if (pid1 == -1)
 		exit_fork_error(1);
-	else if (pid2 == 0)
+	else if (pid1 == 0)
 		handle_child2(pipe_fd, argv, env);
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
+	finish_main(pipe_fd);
 	return (0);
 }

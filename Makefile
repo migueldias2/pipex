@@ -16,8 +16,11 @@ OBJ = $(SRCS:.c=.o)
 
 # Bonus sources and objects
 
-SRCS_BONUS = 	src_bonus/pipex_bonus.c\
- 				src_bonus/utils_bonus.c\
+SRCS_BONUS = 	pipex_bonus.c\
+ 				utils_bonus.c\
+				perrors_bonus.c\
+				utils2_bonus.c
+
 
 OBJ_BONUS = $(SRCS_BONUS:.c=.o)
 
@@ -42,5 +45,5 @@ fclean : clean
 
 re : fclean all
 
-bonus : fclean $(OBJ_BONUS) $(LIBFT)
+bonus : $(OBJ_BONUS) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT) -o $(NAME)

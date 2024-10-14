@@ -6,7 +6,7 @@
 /*   By: mcarepa- <mcarepa-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 18:38:42 by mcarepa-          #+#    #+#             */
-/*   Updated: 2024/10/07 17:37:19 by mcarepa-         ###   ########.fr       */
+/*   Updated: 2024/10/11 18:35:22 by mcarepa-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@ void	exit_args_error(int num)
 	exit(EXIT_FAILURE);
 }
 
-void	exit_open_error(int num)
+void	exit_open_error(int *pipe_fd)
 {
-	if (num == 1)
-		perror("open");
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	perror("open");
 	exit(EXIT_FAILURE);
 }
 

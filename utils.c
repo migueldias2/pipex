@@ -6,11 +6,25 @@
 /*   By: mcarepa- <mcarepa-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 18:38:50 by mcarepa-          #+#    #+#             */
-/*   Updated: 2024/10/08 14:10:45 by mcarepa-         ###   ########.fr       */
+/*   Updated: 2024/10/11 16:20:25 by mcarepa-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	finish_main(int *pipe_fd)
+{
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	wait(NULL);
+	wait(NULL);
+}
+
+void	exit_path_error(void)
+{
+	perror("commands not found");
+	exit(EXIT_FAILURE);
+}
 
 void	ft_free(char *list[])
 {
